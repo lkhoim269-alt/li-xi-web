@@ -4,7 +4,7 @@ const app = express();
 
 // 1. KẾT NỐI MONGODB
 // Thay thế đoạn dưới đây bằng Connection String bạn lấy từ MongoDB Atlas
-const mongoURI = "mongodb+srv://kiro:JdLBskCHlYbzAWCl@cluster0.eqf89by.mongodb.net/?appName=Cluster0";
+const mongoURI = process.env.MONGO_URI;
 
 mongoose.connect(mongoURI)
     .then(() => console.log("✅ Đã kết nối MongoDB Atlas thành công!"))
