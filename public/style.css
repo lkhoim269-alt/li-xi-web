@@ -1,66 +1,151 @@
+/* RESET CƠ BẢN */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 body {
-    background: radial-gradient(circle, #d41414, #800000);
+    /* Nền gradient đỏ Tết sang trọng */
+    background: radial-gradient(circle, #d41414, #4a0000);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: white;
-    margin: 0;
+    overflow-x: hidden;
 }
 
 .container {
     width: 95%;
+    max-width: 1000px;
     text-align: center;
+    padding: 20px;
 }
 
+h1 {
+    margin-bottom: 20px;
+    text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* PHẦN ĐĂNG NHẬP */
+#login-section {
+    background: rgba(0, 0, 0, 0.4);
+    padding: 40px;
+    border-radius: 20px;
+    border: 2px solid gold;
+    display: inline-block;
+}
+
+#login-section input {
+    padding: 12px 20px;
+    font-size: 18px;
+    border-radius: 30px;
+    border: none;
+    outline: none;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+#login-section button {
+    padding: 12px 40px;
+    font-size: 18px;
+    font-weight: bold;
+    color: #b30000;
+    background: gold;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+#login-section button:hover {
+    transform: scale(1.1);
+    background: #fff;
+}
+
+/* KHUNG CHỨA BAO LÌ XÌ (FLEX) */
 .envelope-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 15px;
-    margin-top: 30px;
+    margin: 30px 0;
 }
 
 .envelope {
-    flex: 1 1 150px;
-    max-width: 200px;
-    aspect-ratio: 2/3.5;
-    /* Tỉ lệ khung bao lì xì */
-    background: #ff4d4d;
-    border: 3px solid #ffd700;
-    border-radius: 12px;
+    /* Điều chỉnh kích thước bao lì xì to ra */
+    flex: 0 1 180px;
+    height: 280px;
+    background: #ff3333;
+    border: 4px solid #ffd700;
+    border-radius: 15px;
+    position: relative;
     overflow: hidden;
     cursor: pointer;
-    transition: 0.3s;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 5px;
-    /* Tạo lề để ảnh không chạm sát viền vàng */
-    background-color: #b30000;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
+/* Hiệu ứng khi di chuột vào */
+.envelope:hover {
+    transform: translateY(-15px) rotate(2deg);
+    box-shadow: 0 15px 30px rgba(255, 215, 0, 0.4);
+}
+
+/* QUAN TRỌNG: Xử lý ảnh tờ tiền và cover nằm gọn */
 .envelope img {
     width: 100%;
     height: 100%;
+    /* contain giúp ảnh hiện đầy đủ không bị mất góc */
     object-fit: contain;
-    /* QUAN TRỌNG: Giúp ảnh nằm gọn trong khung không bị mất hình */
-    border-radius: 5px;
+    padding: 5px;
 }
 
+/* Khi bao đã mở */
 .envelope.opened {
-    background-color: #fff;
-    /* Khi mở ra thì nền trắng cho nổi tờ tiền */
-    border-color: #00c853;
+    background: #fff;
+    border-color: #fff;
+    cursor: default;
+    transform: rotateY(360deg);
 }
 
+/* Tờ tiền Việt Nam nằm ngang, khi hiện trong khung dọc 
+   ta sẽ xoay nó lại cho to và dễ nhìn */
+.envelope.opened img {
+    transform: rotate(90deg) scale(1.5);
+}
+
+/* Làm mờ các bao chưa mở nếu đã hết lượt bốc */
 .envelope.disabled {
-    opacity: 0.5;
-    filter: grayscale(0.8);
+    filter: grayscale(1) opacity(0.5);
     cursor: not-allowed;
+    transform: none;
 }
 
+/* TRẠNG THÁI THÔNG BÁO */
 #status-msg {
-    margin-top: 20px;
-    font-size: 1.2rem;
+    margin-top: 25px;
+    min-height: 50px;
+}
+
+.hidden {
+    display: none;
+}
+
+/* Responsive cho Mobile */
+@media (max-width: 600px) {
+    .envelope {
+        flex: 0 1 45%;
+        /* Hiện 2 bao mỗi hàng trên điện thoại */
+        height: 220px;
+    }
+
+    h1 {
+        font-size: 1.5rem;
+    }
 }

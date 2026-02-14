@@ -1,53 +1,56 @@
 const express = require('express');
-const low = require('lowdb');
-const FileSync = require('lowdb/adapters/FileSync');
+const mongoose = require('mongoose');
 const app = express();
 
-const adapter = new FileSync('db.json');
-const db = low(adapter);
-db.defaults({ users: [] }).write();
+// KẾT NỐI MONGODB (Thay đoạn dưới bằng link của bạn)
+const mongoURI = "mongodb+srv://YOUR_USER:YOUR_PASS@YOUR_CLUSTER...";
+mongoose.connect(mongoURI).then(() => console.log("✅ MongoDB Connected"));
+
+// Định nghĩa Schema (Cấu trúc dữ liệu)
+const UserSchema = new mongoose.Schema({
+    username: String,
+    envelopes: [{ value: Number, opened: Boolean }],
+    hasOpenedAny: { type: Boolean, default: false },
+    openedAt: String
+});
+const User = mongoose.model('User', UserSchema);
 
 app.use(express.json());
 app.use(express.static('public'));
 
 const DENOMINATIONS = [2000, 5000, 10000, 20000];
 
-app.post('/api/user-data', (req, res) => {
+app.post('/api/user-data', async (req, res) => {
     const { username } = req.body;
-    let user = db.get('users').find({ username: username.trim() }).value();
+    let user = await User.findOne({ username: username.trim() });
 
     if (!user) {
         const envelopes = Array.from({ length: 5 }, () => ({
             value: DENOMINATIONS[Math.floor(Math.random() * DENOMINATIONS.length)],
             opened: false
         }));
-        user = { username: username.trim(), envelopes, hasOpenedAny: false, openedAt: null };
-        db.get('users').push(user).write();
+        user = new User({ username: username.trim(), envelopes });
+        await user.save();
     }
     res.json(user);
 });
 
-app.post('/api/open-envelope', (req, res) => {
+app.post('/api/open-envelope', async (req, res) => {
     const { username, index } = req.body;
-    // Tìm user và ép kiểu dữ liệu để chắc chắn ghi được vào DB
-    const user = db.get('users').find({ username: username.trim() }).value();
+    const user = await User.findOne({ username: username.trim() });
 
-    if (!user) return res.status(404).json({ error: "Không tìm thấy user" });
-    if (user.hasOpenedAny) return res.status(400).json({ error: "Bạn đã bốc rồi!" });
+    if (!user || user.hasOpenedAny) return res.status(400).json({ error: "Lỗi hoặc đã bóc!" });
 
-    // Lấy thời gian
     const now = new Date();
-    const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')} - ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
+    const timeString = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')} - ${now.getDate()}/${now.getMonth() + 1}/${now.getFullYear()}`;
 
-    // Cập nhật mảng envelopes
     user.envelopes[index].opened = true;
     user.hasOpenedAny = true;
     user.openedAt = timeString;
 
-    // Ghi đè lại object user vào DB
-    db.get('users').find({ username: username.trim() }).assign(user).write();
-
+    await user.save(); // Lưu vĩnh viễn vào Cloud
     res.json({ success: true, value: user.envelopes[index].value, openedAt: timeString });
 });
 
-app.listen(3000, () => console.log('🧧 Server chạy tại http://localhost:3000'));
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`🚀 Server on port ${PORT}`));

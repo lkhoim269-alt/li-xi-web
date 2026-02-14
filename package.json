@@ -2,7 +2,8 @@
   "dependencies": {
     "express": "^5.2.1",
     "lodash": "^4.17.23",
-    "lowdb": "^1.0.0"
+    "lowdb": "^1.0.0",
+    "mongoose": "^9.2.1"
   },
   "name": "lixi_web",
   "version": "1.0.0",
@@ -14,6 +15,5 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "devDependencies": {},
   "description": ""
 }
