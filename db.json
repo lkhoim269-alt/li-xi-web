@@ -1,0 +1,31 @@
+{
+  "users": [
+    {
+      "username": "Lê Minh Khôi",
+      "envelopes": [
+        {
+          "value": 20000,
+          "opened": false
+        },
+        {
+          "value": 5000,
+          "opened": true
+        },
+        {
+          "value": 20000,
+          "opened": false
+        },
+        {
+          "value": 2000,
+          "opened": false
+        },
+        {
+          "value": 20000,
+          "opened": false
+        }
+      ],
+      "hasOpenedAny": true,
+      "openedAt": "12:33:40 - 14/2/2026"
+    }
+  ]
+}

@@ -1,0 +1,66 @@
+body {
+    background: radial-gradient(circle, #d41414, #800000);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    margin: 0;
+}
+
+.container {
+    width: 95%;
+    text-align: center;
+}
+
+.envelope-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 15px;
+    margin-top: 30px;
+}
+
+.envelope {
+    flex: 1 1 150px;
+    max-width: 200px;
+    aspect-ratio: 2/3.5;
+    /* Tỉ lệ khung bao lì xì */
+    background: #ff4d4d;
+    border: 3px solid #ffd700;
+    border-radius: 12px;
+    overflow: hidden;
+    cursor: pointer;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    /* Tạo lề để ảnh không chạm sát viền vàng */
+    background-color: #b30000;
+}
+
+.envelope img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    /* QUAN TRỌNG: Giúp ảnh nằm gọn trong khung không bị mất hình */
+    border-radius: 5px;
+}
+
+.envelope.opened {
+    background-color: #fff;
+    /* Khi mở ra thì nền trắng cho nổi tờ tiền */
+    border-color: #00c853;
+}
+
+.envelope.disabled {
+    opacity: 0.5;
+    filter: grayscale(0.8);
+    cursor: not-allowed;
+}
+
+#status-msg {
+    margin-top: 20px;
+    font-size: 1.2rem;
+}
