@@ -1,14 +1,19 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const app = express();
+require('dotenv').config();
 
 // 1. KẾT NỐI MONGODB
 // Thay thế đoạn dưới đây bằng Connection String bạn lấy từ MongoDB Atlas
-const mongoURI = process.env.MONGO_URI;
+// Thay dòng cũ bằng dòng này (nhớ dùng link thật của bạn)
+const mongoURI = "mongodb+srv://kiro:JdLBskCHlYbzAWCl@cluster0.eqf89by.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
 
 mongoose.connect(mongoURI)
     .then(() => console.log("✅ Đã kết nối MongoDB Atlas thành công!"))
-    .catch(err => console.error("❌ Lỗi kết nối MongoDB:", err));
+    .catch(err => {
+        console.error("❌ LỖI KẾT NỐI MONGODB: ", err.message);
+        process.exit(1); // Dòng này giúp bạn thấy lỗi rõ hơn trong Terminal
+    });
 
 // 2. ĐỊNH NGHĨA CẤU TRÚC DỮ LIỆU (SCHEMA)
 const UserSchema = new mongoose.Schema({

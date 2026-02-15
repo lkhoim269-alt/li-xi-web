@@ -1,4 +1,3 @@
-/* RESET CƠ BẢN */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -6,66 +5,72 @@
 }
 
 body {
-    /* Nền gradient đỏ Tết sang trọng */
     background: radial-gradient(circle, #d41414, #4a0000);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: 'Segoe UI', Arial, sans-serif;
     color: white;
-    overflow-x: hidden;
 }
 
 .container {
     width: 95%;
-    max-width: 1000px;
+    max-width: 900px;
     text-align: center;
     padding: 20px;
 }
 
 h1 {
-    margin-bottom: 20px;
+    margin-bottom: 30px;
+    color: #ffd700;
     text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.5);
 }
 
-/* PHẦN ĐĂNG NHẬP */
+/* LOGIN */
 #login-section {
-    background: rgba(0, 0, 0, 0.4);
-    padding: 40px;
+    background: rgba(0, 0, 0, 0.5);
+    padding: 30px;
     border-radius: 20px;
-    border: 2px solid gold;
+    border: 2px solid #ffd700;
     display: inline-block;
 }
 
-#login-section input {
+input {
     padding: 12px 20px;
-    font-size: 18px;
-    border-radius: 30px;
+    font-size: 16px;
+    border-radius: 25px;
     border: none;
     outline: none;
-    width: 100%;
-    margin-bottom: 20px;
+    width: 250px;
+    margin-right: 10px;
 }
 
-#login-section button {
-    padding: 12px 40px;
-    font-size: 18px;
+button {
+    padding: 12px 25px;
+    font-size: 16px;
     font-weight: bold;
-    color: #b30000;
-    background: gold;
-    border: none;
-    border-radius: 30px;
     cursor: pointer;
+    border-radius: 25px;
+    border: none;
     transition: 0.3s;
 }
 
-#login-section button:hover {
-    transform: scale(1.1);
-    background: #fff;
+#startBtn {
+    background: #ffd700;
+    color: #b30000;
 }
 
-/* KHUNG CHỨA BAO LÌ XÌ (FLEX) */
+#startBtn:hover {
+    background: white;
+    transform: scale(1.05);
+}
+
+/* GAME AREA */
+.hidden {
+    display: none;
+}
+
 .envelope-container {
     display: flex;
     flex-wrap: wrap;
@@ -75,77 +80,91 @@ h1 {
 }
 
 .envelope {
-    /* Điều chỉnh kích thước bao lì xì to ra */
-    flex: 0 1 180px;
-    height: 280px;
+    flex: 0 1 160px;
+    height: 240px;
     background: #ff3333;
-    border: 4px solid #ffd700;
-    border-radius: 15px;
-    position: relative;
+    border: 3px solid #ffd700;
+    border-radius: 12px;
     overflow: hidden;
     cursor: pointer;
-    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: 0.4s;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Hiệu ứng khi di chuột vào */
 .envelope:hover {
-    transform: translateY(-15px) rotate(2deg);
-    box-shadow: 0 15px 30px rgba(255, 215, 0, 0.4);
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(255, 215, 0, 0.3);
 }
 
-/* QUAN TRỌNG: Xử lý ảnh tờ tiền và cover nằm gọn */
 .envelope img {
     width: 100%;
     height: 100%;
-    /* contain giúp ảnh hiện đầy đủ không bị mất góc */
     object-fit: contain;
+    /* Đảm bảo tờ tiền nằm gọn trong khung */
     padding: 5px;
 }
 
-/* Khi bao đã mở */
 .envelope.opened {
-    background: #fff;
-    border-color: #fff;
+    background: white;
     cursor: default;
-    transform: rotateY(360deg);
 }
 
-/* Tờ tiền Việt Nam nằm ngang, khi hiện trong khung dọc 
-   ta sẽ xoay nó lại cho to và dễ nhìn */
 .envelope.opened img {
-    transform: rotate(90deg) scale(1.5);
+    transform: rotate(90deg) scale(1.3);
 }
 
-/* Làm mờ các bao chưa mở nếu đã hết lượt bốc */
+/* Xoay dọc tờ tiền khi mở */
+
 .envelope.disabled {
     filter: grayscale(1) opacity(0.5);
     cursor: not-allowed;
-    transform: none;
 }
 
-/* TRẠNG THÁI THÔNG BÁO */
-#status-msg {
-    margin-top: 25px;
-    min-height: 50px;
+/* MUSIC & LEADERBOARD */
+.audio-control {
+    position: fixed;
+    top: 15px;
+    right: 15px;
 }
 
-.hidden {
-    display: none;
+#musicBtn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid white;
+    font-size: 14px;
 }
 
-/* Responsive cho Mobile */
+.leaderboard {
+    margin-top: 40px;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 20px;
+    border-radius: 15px;
+    border: 1px solid rgba(255, 215, 0, 0.3);
+}
+
+#history-list {
+    list-style: none;
+    text-align: left;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+#history-list li {
+    padding: 8px;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.1);
+    font-size: 14px;
+}
+
 @media (max-width: 600px) {
     .envelope {
         flex: 0 1 45%;
-        /* Hiện 2 bao mỗi hàng trên điện thoại */
-        height: 220px;
+        height: 200px;
     }
 
-    h1 {
-        font-size: 1.5rem;
+    input {
+        width: 100%;
+        margin-bottom: 10px;
     }
 }

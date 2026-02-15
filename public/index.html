@@ -4,24 +4,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hái Lộc Đầu Xuân</title>
+    <title>Lì Xì May Mắn 2026</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
 </head>
 
 <body>
     <div class="container">
-        <h1>🧧 LÌ XÌ MAY MẮN 🧧</h1>
+        <h1>🧧 LÌ XÌ MAY MẮN 2026 🧧</h1>
+
+        <div class="audio-control">
+            <button id="musicBtn">🎵 Bật Nhạc</button>
+            <audio id="bgMusic" loop>
+                <source src="https://www.bensound.com/bensound-music/bensound-energy.mp3" type="audio/mpeg">
+            </audio>
+        </div>
 
         <div id="login-section">
-            <input type="text" id="username" placeholder="Nhập tên của bạn...">
-            <button onclick="login()">Bắt đầu</button>
+            <div class="input-group">
+                <input type="text" id="username" placeholder="Nhập tên của bạn để nhận lộc...">
+                <button id="startBtn" onclick="login()">BẮT ĐẦU</button>
+            </div>
         </div>
 
         <div id="game-section" class="hidden">
             <h2 id="welcome-msg"></h2>
-            <div class="envelope-container" id="envelope-wrapper">
-            </div>
+            <div class="envelope-container" id="envelope-container"></div>
             <p id="status-msg"></p>
+
+            <div class="leaderboard">
+                <h3>🏆 BẢNG VÀNG MAY MẮN 🏆</h3>
+                <ul id="history-list">
+                    <li>Đang tải danh sách...</li>
+                </ul>
+            </div>
         </div>
     </div>
     <script src="script.js"></script>

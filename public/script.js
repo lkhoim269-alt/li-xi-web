@@ -1,69 +1,116 @@
 let currentUser = "";
 
+// Điều khiển nhạc nền
+const musicBtn = document.getElementById('musicBtn');
+const bgMusic = document.getElementById('bgMusic');
+
+musicBtn.onclick = () => {
+    if (bgMusic.paused) {
+        bgMusic.play().catch(() => alert("Hãy tương tác với trang web trước khi bật nhạc!"));
+        musicBtn.innerText = "⏸ Tắt Nhạc";
+    } else {
+        bgMusic.pause();
+        musicBtn.innerText = "🎵 Bật Nhạc";
+    }
+};
+
+// Hàm đăng nhập/khởi tạo người dùng
 async function login() {
-    const input = document.getElementById('username');
-    if (!input.value.trim()) return alert("Nhập tên bạn ơi!");
-    currentUser = input.value.trim();
+    const nameInput = document.getElementById('username');
+    const name = nameInput.value.trim();
 
-    const res = await fetch('/api/user-data', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: currentUser })
-    });
-    const data = await res.json();
-    renderGame(data);
-}
+    if (!name) {
+        alert("Vui lòng nhập tên của bạn!");
+        return;
+    }
 
-function renderGame(data) {
-    document.getElementById('login-section').classList.add('hidden');
-    document.getElementById('game-section').classList.remove('hidden');
-    document.getElementById('welcome-msg').innerText = `Chào mừng ${data.username}!`;
+    currentUser = name;
 
-    const wrapper = document.getElementById('envelope-wrapper');
-    const statusMsg = document.getElementById('status-msg');
-    wrapper.innerHTML = "";
-
-    data.envelopes.forEach((env, index) => {
-        const div = document.createElement('div');
-        div.className = 'envelope';
-
-        if (env.opened) {
-            div.classList.add('opened');
-            div.innerHTML = `<img src="images/${env.value / 1000}k.jpg">`;
-        } else {
-            div.innerHTML = `<img src="images/cover.jpg">`;
-            if (data.hasOpenedAny) {
-                div.classList.add('disabled');
-            } else {
-                div.onclick = () => openEnvelope(index);
-            }
-        }
-        wrapper.appendChild(div);
-    });
-
-    if (data.hasOpenedAny && data.openedAt) {
-        statusMsg.innerHTML = `
-            <div style="background: rgba(255,255,255,0.2); padding: 15px; border-radius: 10px; border: 1px dashed gold;">
-                <h3 style="color: gold">🧧 ĐÃ NHẬN LỘC 🧧</h3>
-                <p>Thời gian: ${data.openedAt}</p>
-            </div>`;
+    try {
+        const res = await fetch('/api/user-data', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: currentUser })
+        });
+        const data = await res.json();
+        showGame(data);
+    } catch (err) {
+        alert("Lỗi kết nối server rồi bạn ơi!");
     }
 }
 
-async function openEnvelope(index) {
-    if (!confirm("Bạn chắc chắn muốn bốc bao này? Mỗi người chỉ được bốc 1 lần thôi đó!")) return;
+// Hiển thị màn hình game
+function showGame(user) {
+    document.getElementById('login-section').classList.add('hidden');
+    document.getElementById('game-section').classList.remove('hidden');
+    document.getElementById('welcome-msg').innerText = `Chúc mừng năm mới, ${user.username}!`;
+    renderEnvelopes(user);
+    // Tạm thời ẩn bảng vàng hoặc cập nhật nếu bạn có API riêng
+    document.getElementById('history-list').innerHTML = `<li>${user.username} đang sẵn sàng bốc lộc...</li>`;
+}
 
-    const res = await fetch('/api/open-envelope', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: currentUser, index })
+// Vẽ các bao lì xì
+function renderEnvelopes(user) {
+    const container = document.getElementById('envelope-container');
+    container.innerHTML = "";
+
+    user.envelopes.forEach((env, index) => {
+        const div = document.createElement('div');
+        // Nếu người dùng đã bốc 1 bao rồi thì làm mờ các bao còn lại
+        div.className = `envelope ${env.opened ? 'opened' : ''} ${user.hasOpenedAny && !env.opened ? 'disabled' : ''}`;
+
+        const img = document.createElement('img');
+        // Nếu bao đã mở thì hiện tiền, chưa mở hiện cover
+        img.src = env.opened ? `images/${env.value / 1000}k.jpg` : `images/cover.jpg`;
+
+        div.appendChild(img);
+
+        // Chỉ cho phép click nếu người dùng chưa bốc bao nào
+        if (!user.hasOpenedAny) {
+            div.onclick = () => openEnvelope(index);
+        }
+        container.appendChild(div);
     });
-    const result = await res.json();
+}
 
-    if (result.success) {
-        alert(`CHÚC MỪNG! Bạn nhận được tờ ${result.value.toLocaleString()} VNĐ`);
-        login(); // Load lại để hiển thị thời gian và trạng thái mới
-    } else {
-        alert(result.error);
+// Xử lý bốc lì xì
+async function openEnvelope(index) {
+    try {
+        const res = await fetch('/api/open-envelope', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: currentUser, index })
+        });
+        const data = await res.json();
+
+        if (data.success) {
+            // 1. Hiệu ứng pháo hoa
+            confetti({
+                particleCount: 150,
+                spread: 70,
+                origin: { y: 0.6 }
+            });
+
+            // 2. Thông báo trúng thưởng
+            alert(`🧧 Chúc mừng! Bạn nhận được ${data.value.toLocaleString()} VNĐ!`);
+
+            // 3. CẬP NHẬT GIAO DIỆN TẠI CHỖ (Thay vì reload)
+            // Lấy lại dữ liệu mới nhất từ server để hiển thị trạng thái đã mở
+            const userRes = await fetch('/api/user-data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: currentUser })
+            });
+            const userData = await userRes.json();
+
+            // Vẽ lại các bao lì xì với trạng thái mới
+            renderEnvelopes(userData);
+
+        } else {
+            alert(data.error || "Có lỗi xảy ra!");
+        }
+    } catch (err) {
+        console.error("Lỗi:", err);
+        alert("Không thể kết nối đến máy chủ!");
     }
 }
